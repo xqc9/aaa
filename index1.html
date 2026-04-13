@@ -6,17 +6,21 @@
   <title></title>
   <style>
     :root {
-      --bg: #efefef;
+      --bg: #f4f4f4;
       --panel: #ffffff;
       --text: #17181a;
       --muted: #9ea2a8;
-      --line: #e7e7e7;
-      --accent: #6c84ae;
+      --line: #e9e9e9;
+      --accent: #7387a7;
     }
 
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font: inherit;
     }
 
     html,
@@ -91,11 +95,13 @@
       border-bottom: 1px solid var(--line);
       background: var(--panel);
       cursor: pointer;
+      transition: background-color 140ms ease;
     }
 
     .card-inner {
       position: relative;
       padding: 22px 48px 22px 28px;
+      transition: background-color 140ms ease;
     }
 
     .card-title {
@@ -124,23 +130,97 @@
     }
 
     .action-wrap {
-      margin-top: 14px;
-      padding: 18px 20px;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: var(--panel);
+      margin-top: 0;
+      padding-top: 12px;
+      background: #f4f4f4;
     }
 
     .action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
-      padding: 8px 0;
+      min-height: 68px;
+      padding: 10px 24px calc(10px + env(safe-area-inset-bottom));
       border: 0;
-      background: transparent;
+      border-top: 1px solid #ececec;
+      border-bottom: 1px solid #ececec;
+      border-radius: 0;
+      background: #ffffff;
       color: var(--accent);
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 700;
-      line-height: 1.4;
+      letter-spacing: -0.03em;
+      line-height: 1;
       text-align: center;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+      box-shadow: none;
+      transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+      cursor: pointer;
+    }
+
+    .action:focus,
+    .action:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .card:active .card-inner,
+    .card.is-pressed .card-inner {
+      background: #f7f8fa;
+    }
+
+    .action:active {
+      background: #f8f9fb;
+      color: #627796;
+      transform: scale(0.996);
+    }
+
+    .image-preview[hidden] {
+      display: none;
+    }
+
+    .image-preview {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(15, 17, 21, 0.86);
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    .image-preview.is-open {
+      opacity: 1;
+    }
+
+    .preview-card {
+      width: min(100%, 560px);
+      max-height: min(92dvh, 920px);
+      border-radius: 24px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+      transform: translateY(16px) scale(0.98);
+      transition: transform 180ms ease;
+    }
+
+    .image-preview.is-open .preview-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .preview-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: min(92dvh, 920px);
+      object-fit: contain;
+      background: #ffffff;
     }
 
     .floating-rabbit {
@@ -207,11 +287,13 @@
       }
 
       .action-wrap {
-        padding: 16px 16px;
+        padding-top: 10px;
       }
 
       .action {
-        font-size: 17px;
+        min-height: 62px;
+        padding: 9px 18px calc(9px + env(safe-area-inset-bottom));
+        font-size: 18px;
       }
     }
   </style>
@@ -236,13 +318,21 @@
       </div>
     </section>
 
-    <section class="action-wrap" aria-hidden="true">
-      <button class="action" type="button">添加联系人</button>
+    <section class="action-wrap">
+      <button class="action" type="button">添加到通讯录</button>
     </section>
   </main>
 
+  <div class="image-preview" id="image-preview" hidden aria-hidden="true">
+    <div class="preview-card">
+      <img class="preview-image" src="er1.jpg" alt="微信二维码">
+    </div>
+  </div>
+
   <script>
     const triggerCard = document.querySelector(".card");
+    const addFriendButton = document.querySelector(".action");
+    const imagePreview = document.querySelector("#image-preview");
     let rabbit = null;
     let dragState = null;
 
@@ -352,6 +442,26 @@
       rabbit = img;
     }
 
+    function openImagePreview() {
+      imagePreview.hidden = false;
+      imagePreview.setAttribute("aria-hidden", "false");
+
+      window.requestAnimationFrame(() => {
+        imagePreview.classList.add("is-open");
+      });
+    }
+
+    function closeImagePreview() {
+      imagePreview.classList.remove("is-open");
+      imagePreview.setAttribute("aria-hidden", "true");
+
+      window.setTimeout(() => {
+        if (!imagePreview.classList.contains("is-open")) {
+          imagePreview.hidden = true;
+        }
+      }, 180);
+    }
+
     triggerCard.addEventListener("click", (event) => {
       if (rabbit) {
         return;
@@ -366,6 +476,22 @@
     window.addEventListener("resize", () => {
       if (rabbit && rabbitOutsideViewport(rabbit)) {
         removeRabbit();
+      }
+    });
+
+    addFriendButton.addEventListener("click", () => {
+      openImagePreview();
+    });
+
+    imagePreview.addEventListener("click", (event) => {
+      if (event.target === imagePreview || event.target.classList.contains("preview-image")) {
+        closeImagePreview();
+      }
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !imagePreview.hidden) {
+        closeImagePreview();
       }
     });
   </script>
