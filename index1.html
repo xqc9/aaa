@@ -47,42 +47,12 @@
     }
 
     .avatar {
-      position: relative;
       width: 56px;
       height: 56px;
       border-radius: 10px;
       overflow: hidden;
       border: 1px solid #f0ddd7;
-      background:
-        radial-gradient(circle at 50% 39%, #ffd7d4 0 8px, transparent 8px),
-        radial-gradient(circle at 39% 37%, #2d211f 0 3px, transparent 3px),
-        radial-gradient(circle at 61% 37%, #2d211f 0 3px, transparent 3px),
-        radial-gradient(circle at 50% 51%, #f6beb8 0 20px, transparent 20px),
-        linear-gradient(180deg, #fff4f0 0%, #f6e2d9 100%);
-    }
-
-    .avatar::before {
-      content: "";
-      position: absolute;
-      left: 10px;
-      top: 11px;
-      width: 36px;
-      height: 27px;
-      border-radius: 20px 20px 15px 15px;
-      background: #4b3028;
-      box-shadow:
-        -4px 5px 0 -2px #4b3028,
-        4px 5px 0 -2px #4b3028;
-    }
-
-    .avatar::after {
-      content: "头像";
-      position: absolute;
-      inset: auto 0 5px;
-      text-align: center;
-      color: rgba(80, 50, 45, 0.5);
-      font-size: 8px;
-      letter-spacing: 0.08em;
+      object-fit: cover;
     }
 
     .profile-name {
@@ -249,7 +219,7 @@
 <body>
   <main class="phone" aria-label="联系人页面">
     <section class="profile" aria-label="联系人信息">
-      <div class="avatar" aria-hidden="true"></div>
+      <img class="avatar" src="me1.jpg" alt="头像">
       <div>
         <h1 class="profile-name">似锦<span class="badge" aria-hidden="true">人</span></h1>
         <div class="region">地区: 中国大陆&nbsp;&nbsp;上海</div>
