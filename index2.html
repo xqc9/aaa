@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title></title>
+  <style>
+    :root {
+      --bg: #efefef;
+      --panel: #ffffff;
+      --text: #17181a;
+      --muted: #9ea2a8;
+      --line: #e7e7e7;
+      --accent: #6c84ae;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    }
+
+    .phone {
+      min-height: 100dvh;
+      background: linear-gradient(to bottom, #ffffff 0 32%, var(--bg) 32% 100%);
+    }
+
+    .profile {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 13px;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top) + 34px) 28px 22px;
+      background: var(--panel);
+    }
+
+    .avatar {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #f0ddd7;
+      background:
+        radial-gradient(circle at 50% 39%, #ffd7d4 0 8px, transparent 8px),
+        radial-gradient(circle at 39% 37%, #2d211f 0 3px, transparent 3px),
+        radial-gradient(circle at 61% 37%, #2d211f 0 3px, transparent 3px),
+        radial-gradient(circle at 50% 51%, #f6beb8 0 20px, transparent 20px),
+        linear-gradient(180deg, #fff4f0 0%, #f6e2d9 100%);
+    }
+
+    .avatar::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 11px;
+      width: 36px;
+      height: 27px;
+      border-radius: 20px 20px 15px 15px;
+      background: #4b3028;
+      box-shadow:
+        -4px 5px 0 -2px #4b3028,
+        4px 5px 0 -2px #4b3028;
+    }
+
+    .avatar::after {
+      content: "头像";
+      position: absolute;
+      inset: auto 0 5px;
+      text-align: center;
+      color: rgba(80, 50, 45, 0.5);
+      font-size: 8px;
+      letter-spacing: 0.08em;
+    }
+
+    .profile-name {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      margin-left: 5px;
+      border-radius: 50%;
+      background: #5f9bf7;
+      color: #ffffff;
+      font-size: 8px;
+      vertical-align: middle;
+    }
+
+    .region {
+      margin-top: 10px;
+      color: #7a7f87;
+      font-size: 14px;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    .card {
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      padding: 22px 48px 22px 28px;
+    }
+
+    .card-title {
+      margin: 0;
+      color: #202224;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .card-desc {
+      margin: 14px 0 0;
+      color: #b0b4bb;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .chevron {
+      position: absolute;
+      right: 24px;
+      top: 24px;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #cacdd3;
+      border-right: 2px solid #cacdd3;
+      transform: rotate(45deg);
+    }
+
+    .action-wrap {
+      margin-top: 14px;
+      padding: 18px 20px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .action {
+      width: 100%;
+      padding: 8px 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .floating-rabbit {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: min(42vw, 170px);
+      max-width: 170px;
+      z-index: 50;
+      user-select: none;
+      -webkit-user-drag: none;
+      touch-action: none;
+      transform-origin: center center;
+      will-change: left, top, transform, opacity;
+      filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.2));
+      cursor: grab;
+      animation: rabbit-appear 220ms ease-out;
+    }
+
+    .floating-rabbit.dragging {
+      cursor: grabbing;
+    }
+
+    .floating-rabbit.removing {
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    @keyframes rabbit-appear {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .profile {
+        grid-template-columns: 56px 1fr;
+        gap: 12px;
+        padding: calc(env(safe-area-inset-top) + 28px) 20px 20px;
+      }
+
+      .profile-name {
+        font-size: 22px;
+      }
+
+      .region {
+        font-size: 13px;
+      }
+
+      .card-inner {
+        padding: 20px 42px 20px 20px;
+      }
+
+      .card-title {
+        font-size: 17px;
+      }
+
+      .card-desc {
+        font-size: 12px;
+      }
+
+      .action-wrap {
+        padding: 16px 16px;
+      }
+
+      .action {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="联系人页面">
+    <section class="profile" aria-label="联系人信息">
+      <div class="avatar" aria-hidden="true"></div>
+      <div>
+        <h1 class="profile-name">双喜<span class="badge" aria-hidden="true">人</span></h1>
+        <div class="region">地区: 中国大陆&nbsp;&nbsp;上海</div>
+      </div>
+    </section>
+
+    <section class="card" aria-label="朋友资料">
+      <div class="card-inner">
+        <div class="chevron" aria-hidden="true"></div>
+        <h2 class="card-title">朋友资料</h2>
+        <p class="card-desc">
+          添加朋友的备注名、电话、标签、备注、照片等，并设置朋友权限。
+        </p>
+      </div>
+    </section>
+
+    <section class="action-wrap" aria-hidden="true">
+      <button class="action" type="button">添加联系人</button>
+    </section>
+  </main>
+
+  <script>
+    const triggerCard = document.querySelector(".card");
+    let rabbit = null;
+    let dragState = null;
+
+    function updateRabbitTransform(target) {
+      target.style.transform = `translate(-50%, -50%) scale(${target.dataset.scale})`;
+    }
+
+    function removeRabbit() {
+      if (!rabbit) {
+        return;
+      }
+
+      const target = rabbit;
+      rabbit = null;
+      dragState = null;
+      target.classList.add("removing");
+      window.setTimeout(() => {
+        target.remove();
+      }, 180);
+    }
+
+    function rabbitOutsideViewport(target) {
+      const rect = target.getBoundingClientRect();
+      return (
+        rect.right < 0 ||
+        rect.left > window.innerWidth ||
+        rect.bottom < 0 ||
+        rect.top > window.innerHeight
+      );
+    }
+
+    function createRabbit(centerX, centerY) {
+      if (rabbit) {
+        return;
+      }
+
+      const img = document.createElement("img");
+      img.src = "./rabbit.webp";
+      img.alt = "rabbit";
+      img.className = "floating-rabbit";
+      img.draggable = false;
+      img.dataset.scale = "0.14";
+      img.style.left = `${centerX}px`;
+      img.style.top = `${centerY}px`;
+      updateRabbitTransform(img);
+
+      img.addEventListener("pointerdown", (event) => {
+        img.setPointerCapture(event.pointerId);
+        img.classList.add("dragging");
+
+        dragState = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          originX: parseFloat(img.style.left),
+          originY: parseFloat(img.style.top),
+          moved: false
+        };
+      });
+
+      img.addEventListener("pointermove", (event) => {
+        if (!dragState || dragState.pointerId !== event.pointerId) {
+          return;
+        }
+
+        const diffX = event.clientX - dragState.startX;
+        const diffY = event.clientY - dragState.startY;
+
+        if (Math.abs(diffX) > 4 || Math.abs(diffY) > 4) {
+          dragState.moved = true;
+        }
+
+        img.style.left = `${dragState.originX + diffX}px`;
+        img.style.top = `${dragState.originY + diffY}px`;
+      });
+
+      img.addEventListener("pointerup", (event) => {
+        if (!dragState || dragState.pointerId !== event.pointerId) {
+          return;
+        }
+
+        img.classList.remove("dragging");
+
+        if (!dragState.moved) {
+          const currentScale = parseFloat(img.dataset.scale);
+          img.dataset.scale = String(Math.min(currentScale + 0.16, 2.4));
+          img.style.transition = "transform 180ms ease";
+          updateRabbitTransform(img);
+          window.setTimeout(() => {
+            if (img.isConnected) {
+              img.style.transition = "";
+            }
+          }, 180);
+        } else if (rabbitOutsideViewport(img)) {
+          removeRabbit();
+        }
+
+        dragState = null;
+      });
+
+      img.addEventListener("pointercancel", () => {
+        img.classList.remove("dragging");
+        dragState = null;
+      });
+
+      document.body.appendChild(img);
+      rabbit = img;
+    }
+
+    triggerCard.addEventListener("click", (event) => {
+      if (rabbit) {
+        return;
+      }
+
+      const rect = triggerCard.getBoundingClientRect();
+      const centerX = event.clientX || rect.left + rect.width / 2;
+      const centerY = event.clientY || rect.top + rect.height / 2;
+      createRabbit(centerX, centerY);
+    });
+
+    window.addEventListener("resize", () => {
+      if (rabbit && rabbitOutsideViewport(rabbit)) {
+        removeRabbit();
+      }
+    });
+  </script>
+</body>
+</html>
